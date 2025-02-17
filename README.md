@@ -10,14 +10,18 @@
 ---
 
 # Required ReadMe Info for ALL MCS1653 Projects
-* **Project**   - 
-* **Your Name** - 
-* **Date**      - 
+* **Project**   - MCS1653-Platformer
+* **Your Name** - Alain Dauphin
+* **Date**      - 2/17/2025
 
 <br>
 
 1. **What are the controls to your game? How do we play?**
-
+W - Jump/Double jump
+A - Move left
+D - Move left
+Shift - Dash attack
+Spacebar - Sword attack
 
 
 <br>
@@ -29,19 +33,23 @@
 <br>
 
 3. **Any assets used that you didn't create yourself?** <br> (art, music, etc. Just tell us where you got it, link it here)
-
+The sword asset - https://assetstore.unity.com/packages/3d/props/weapons/free-low-poly-swords-rpg-weapons-198166
+The enemy material - https://freepbr.com/product/military-panel1/
+The platform material - https://freepbr.com/product/old-metal-slats1/
+The Hearts sprite - https://fliflifly.itch.io/hearts-and-health-bar?download
+The background art - https://craftpix.net/freebies/free-scrolling-city-backgrounds-pixel-art/?utm_campaign=SocialNetwork&utm_source=Behance&utm_medium=free-scrolling-city-backgrounds-pixel-art
 
 
 <br>
 
 4. **Did you receive help from anyone outside this class?** <br> (list their names and what they helped with)
-
+I did not
 
 
 <br>
 
 5. **Did you get help from any AI Code Assistants?** <br> (Tell us which .cs file to look in for the citation and describe what you learned)
-
+While I don't have the citation in (at the moment), I had received a lot of help for getting the ShooterBehaviour, PlayerAttack, and Player Health scripts for specifically avoiding clashes and meeting conditions.
 
 
 <br>
@@ -53,7 +61,7 @@
 <br>
 
 7. **What trouble did you have with this project?**
-
+I had a ton of script clashing, where the implement of one change would affect another. I had to cut about 5 hours of cut content due to not being able to find a working solution, even with the help of AI.
 
 
 <br>
