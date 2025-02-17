@@ -1,57 +1,78 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5.0f;
     public float jumpForce = 12.0f;
+    public float dashSpeed = 25.0f;
+    public float dashDuration = 0.3f;
     public LayerMask groundLayer;
-    public Transform groundCheck; // Empty GameObject at the bottom of the player
+    public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
     public Animator animator;
 
     private Rigidbody rb;
-    private bool canDoubleJump; // Tracks only second jump
-    private Transform playerModel; // Reference to the 3D model of the player
+    private bool canDoubleJump;
+    private bool canDash;
+    private Transform playerModel;
+
+    private bool isDashing = false;
+    private float dashEndTime = 0f;
+    private Vector3 dashDirection;
+
+    public Collider attackCollider;
+    public LayerMask enemyLayer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        playerModel = transform.GetChild(0); // Assuming the 3D model is a child of the player object
+        playerModel = transform.GetChild(0);
+        canDash = true; // Dash is available at start
     }
 
     void Update()
     {
-        // Movement handling
-        Move();
-        Jump();
+        if (!isDashing)
+        {
+            Move();
+            Jump();
+        }
+
+        HandleDash();
+        HandleAttack();
+
+        if (IsGrounded())
+        {
+            canDoubleJump = true;
+            canDash = true; // Reset dash on landing
+        }
+
+        if (isDashing)
+        {
+            DashAttack();
+        }
     }
 
     void Move()
     {
-        float moveInput = Input.GetAxis("Horizontal");
-        Vector3 move = new Vector3(moveInput * speed, rb.velocity.y, 0);
+        float moveInputX = Input.GetAxisRaw("Horizontal");
+        Vector3 move = new Vector3(moveInputX * speed, rb.velocity.y, 0);
         rb.velocity = move;
 
-        // Rotate the entire player object based on movement direction
-        if (moveInput < 0)
+        if (moveInputX < 0)
         {
-            // Rotate the entire player object to face left (180 degrees rotation)
             transform.rotation = Quaternion.Euler(0, 180, 0);
         }
-        else if (moveInput > 0)
+        else if (moveInputX > 0)
         {
-            // Reset rotation to default (face right)
             transform.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
 
     void Jump()
     {
-        if (IsGrounded())
-        {
-            canDoubleJump = true; // Reset double jump when on the ground
-        }
-
         if (IsGrounded() && Input.GetKeyDown(KeyCode.W))
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
@@ -59,7 +80,82 @@ public class PlayerMovement : MonoBehaviour
         else if (canDoubleJump && Input.GetKeyDown(KeyCode.W))
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
-            canDoubleJump = false; // Disable further jumps after second jump
+            canDoubleJump = false;
+            canDash = true; // Restore dash after double jump
+        }
+    }
+
+    void HandleDash()
+    {
+        if (canDash && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            StartDash();
+        }
+
+        if (isDashing && Time.time >= dashEndTime)
+        {
+            EndDash();
+        }
+    }
+
+    void StartDash()
+    {
+        isDashing = true;
+        canDash = false; // Disable further dashes
+        dashEndTime = Time.time + dashDuration;
+
+        float dashInputX = Input.GetAxisRaw("Horizontal");
+        float dashInputY = Input.GetAxisRaw("Vertical");
+
+        dashDirection = new Vector3(
+            dashInputX != 0 ? dashInputX : (transform.rotation.y == 0 ? 1 : -1),
+            dashInputY,
+            0
+        ).normalized;
+
+        rb.velocity = dashDirection * dashSpeed;
+        rb.useGravity = false;
+    }
+
+    void EndDash()
+    {
+        isDashing = false;
+        rb.useGravity = true;
+    }
+
+    void HandleAttack()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Attack();
+        }
+    }
+
+    void Attack()
+    {
+        Collider[] hitEnemies = Physics.OverlapBox(attackCollider.bounds.center, attackCollider.bounds.extents, Quaternion.identity, enemyLayer);
+
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy") && attackCollider.bounds.Contains(enemy.transform.position))
+            {
+                Destroy(enemy.gameObject);
+                Debug.Log("Enemy Eliminated: " + enemy.name);
+            }
+        }
+    }
+
+    void DashAttack()
+    {
+        Collider[] hitEnemies = Physics.OverlapBox(attackCollider.bounds.center, attackCollider.bounds.extents, Quaternion.identity, enemyLayer);
+
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy") && attackCollider.bounds.Contains(enemy.transform.position))
+            {
+                Destroy(enemy.gameObject);
+                Debug.Log("Enemy Eliminated by Dash: " + enemy.name);
+            }
         }
     }
 

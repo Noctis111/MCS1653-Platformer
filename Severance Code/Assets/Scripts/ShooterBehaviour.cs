@@ -36,7 +36,7 @@ public class ShooterBehaviour : MonoBehaviour
     {
         if (!firstBulletShot)
         {
-            yield return new WaitForSeconds(2f);  // Wait for 2 seconds before the first shot
+            yield return new WaitForSeconds(1f);  // Wait for 2 seconds before the first shot
             firstBulletShot = true;
         }
 

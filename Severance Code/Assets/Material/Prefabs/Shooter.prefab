@@ -311,7 +311,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 112203321549120069, guid: 40eba06ec75ee104ead5e6c7adb6ae9c, type: 3}
   firePoint: {fileID: 3037718764169243908}
   fireRate: 1
-  bulletSpeed: 10
+  bulletSpeed: 20
   bulletLifetime: 3
   sphereCollider: {fileID: 8260027323519527785}
   rotationSpeed: 5
